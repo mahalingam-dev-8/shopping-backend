@@ -21,7 +21,7 @@ export class ProductsService {
 
     async createproducts(datas:CreateProductRequest, userid:number){
 
-        const product =  this.prismaservice.product.create(
+        const product = await this.prismaservice.product.create(
             {
                 data:{
                     ...datas, userid,
@@ -43,7 +43,7 @@ export class ProductsService {
              args.where = {sold: false};
              
         }
-        const products = await this.prismaservice.product.findMany();
+        const products = await this.prismaservice.product.findMany(args);
         return Promise.all(
             products.map(async(product)=> ({
                 ...product,

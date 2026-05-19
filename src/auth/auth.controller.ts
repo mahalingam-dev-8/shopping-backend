@@ -1,7 +1,7 @@
 import { Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
 import { currentuser } from './current-user.decorator';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 

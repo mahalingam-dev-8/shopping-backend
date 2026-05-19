@@ -32,7 +32,7 @@ export class CheckoutService {
                     }
                 ],
                 mode:'payment',
-                success_url: this.ConfigServie.getOrThrow('STRIPE_SUCEESS_URL'),
+                success_url: this.ConfigServie.getOrThrow('STRIPE_SUCCESS_URL'),
                 cancel_url: this.ConfigServie.getOrThrow('STRIPE_CANCEL_URL')
                 
             }

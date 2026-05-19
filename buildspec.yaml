@@ -7,7 +7,7 @@ phases:
       - npm install --legacy-peer-deps
   build:
     commands:
-      - npm run prisma generate
+      - npx prisma generate
       - npm run build
 artifacts:
   files:

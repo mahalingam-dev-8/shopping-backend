@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { createuserrequest } from './dto/create-user.resuest';
-import { Prisma, User } from 'generated/prisma';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hash } from 'bcrypt';
 

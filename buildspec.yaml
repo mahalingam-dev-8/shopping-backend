@@ -4,12 +4,11 @@ phases:
     runtime-versions:
       nodejs: latest
     commands:
-      - npm install -g pnpm
-      - pnpm install
+      - npm install --legacy-peer-deps
   build:
     commands:
-      - pnpm prisma generate
-      - pnpm build
+      - npm run prisma generate
+      - npm run build
 artifacts:
   files:
     - '**/*'

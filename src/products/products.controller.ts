@@ -30,7 +30,7 @@ export class ProductsController {
             new ParseFilePipe({
                 validators: [
                     new MaxFileSizeValidator({ maxSize: 2000000 }),
-                    new FileTypeValidator({ fileType: /image\/(jpeg|png|webp)/ }),
+                    new FileTypeValidator({ fileType: 'image/(jpeg|png|webp)' }),
                 ],
             }),
         )

@@ -1,4 +1,4 @@
-import { WebSocketGateway, WebSocketServer, WsException } from "@nestjs/websockets";
+import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { AuthService } from "src/auth/auth.service";
 
@@ -25,9 +25,14 @@ export class ProductsGateway {
 
     handleConnection(client: Socket) {
     try {
-      this.authService.verifyToken(client.handshake.auth.Authentication.value);
+      const token = client.handshake.auth?.Authentication?.value ?? client.handshake.auth?.Authentication;
+      if (!token) {
+        client.disconnect();
+        return;
+      }
+      this.authService.verifyToken(token);
     } catch (err) {
-      throw new WsException('Unauthorized.');
+      client.disconnect();
     }
   }
 

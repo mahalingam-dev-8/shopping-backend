@@ -1,4 +1,5 @@
 import { Body, Controller, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateProductRequest } from './dto/create-product.request';
 import { currentuser } from 'src/auth/current-user.decorator';
@@ -7,6 +8,7 @@ import { ProductsService } from './products.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { S3Service } from 'src/s3/s3.service';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
 

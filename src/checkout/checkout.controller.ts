@@ -1,9 +1,10 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { createproductnumber } from './dto/create-session';
 import { CheckoutService } from './checkout.service';
 
+@ApiTags('Checkout')
 @Controller('checkout')
 export class CheckoutController {
 

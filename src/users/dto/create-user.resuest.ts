@@ -1,12 +1,15 @@
-import { IsEmail, IsStrongPassword } from "class-validator";
+import { IsEmail, IsEnum, IsOptional, IsStrongPassword } from "class-validator";
+import { Role } from "@prisma/client";
 
+export class createuserrequest {
 
-
-export class createuserrequest{
-    
     @IsEmail()
-    email:string;
-    
+    email: string;
+
     @IsStrongPassword()
-    password:string;
+    password: string;
+
+    @IsOptional()
+    @IsEnum(Role)
+    role?: Role = Role.USER;
 }

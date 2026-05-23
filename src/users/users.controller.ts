@@ -24,8 +24,8 @@ export class UsersController {
 
     @Get('me')
     @UseGuards(JwtAuthGuard)
-    getme(@currentuser() user:TokenPayload){
-         return user;
+    getme(@currentuser() user: TokenPayload){
+        return this.userservice.getuser({ id: user.userid });
     }
      
 

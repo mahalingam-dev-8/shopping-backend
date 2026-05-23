@@ -30,12 +30,16 @@ export class S3Service {
     return `https://${this.bucket}.s3.amazonaws.com/${key}`;
   }
 
-  async getImageUrl(key: string): Promise<string | null> {
-    try {
-      await this.s3.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
-      return `https://${this.bucket}.s3.amazonaws.com/${key}`;
-    } catch {
-      return null;
+  async getImageUrl(baseKey: string): Promise<string | null> {
+    for (const ext of ['jpg', 'jpeg', 'png', 'webp']) {
+      const key = `${baseKey}.${ext}`;
+      try {
+        await this.s3.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
+        return `https://${this.bucket}.s3.amazonaws.com/${key}`;
+      } catch {
+        continue;
+      }
     }
+    return null;
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, MaxFileSizeValidator, Param, ParseFilePipe, Post, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateProductRequest } from './dto/create-product.request';
 import { currentuser } from 'src/auth/current-user.decorator';
@@ -29,14 +29,14 @@ export class ProductsController {
         @UploadedFile(
             new ParseFilePipe({
                 validators: [
-                    new MaxFileSizeValidator({ maxSize: 500000 }),
-                    new FileTypeValidator({ fileType: 'image/jpeg' }),
+                    new MaxFileSizeValidator({ maxSize: 2000000 }),
                 ],
             }),
         )
         file: Express.Multer.File,
     ) {
-        const imageUrl = await this.s3Service.uploadImage(`${productId}.jpg`, file.buffer, file.mimetype);
+        const ext = file.originalname.split('.').pop();
+        const imageUrl = await this.s3Service.uploadImage(`${productId}.${ext}`, file.buffer, file.mimetype);
         return { imageUrl };
     }
 

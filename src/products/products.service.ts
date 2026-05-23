@@ -31,7 +31,7 @@ export class ProductsService {
         return Promise.all(
             products.map(async (product) => ({
                 ...product,
-                imageUrl: await this.s3Service.getImageUrl(`${product.id}.jpg`),
+                imageUrl: await this.s3Service.getImageUrl(`${product.id}`),
             })),
         );
     }
@@ -40,7 +40,7 @@ export class ProductsService {
         try {
             return {
                 ...(await this.prismaservice.product.findUniqueOrThrow({ where: { id: productId } })),
-                imageUrl: await this.s3Service.getImageUrl(`${productId}.jpg`),
+                imageUrl: await this.s3Service.getImageUrl(`${productId}`),
             };
         } catch (err) {
             throw new NotFoundException(`Product not found for id ${productId}`);

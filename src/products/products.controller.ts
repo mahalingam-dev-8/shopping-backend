@@ -30,13 +30,14 @@ export class ProductsController {
             new ParseFilePipe({
                 validators: [
                     new MaxFileSizeValidator({ maxSize: 2000000 }),
-                    new FileTypeValidator({ fileType: 'image/jpeg' }),
+                    new FileTypeValidator({ fileType: /image\/(jpeg|png|webp)/ }),
                 ],
             }),
         )
         file: Express.Multer.File,
     ) {
-        const imageUrl = await this.s3Service.uploadImage(`${productId}.jpg`, file.buffer, file.mimetype);
+        const ext = file.mimetype.split('/')[1];
+        const imageUrl = await this.s3Service.uploadImage(`${productId}.${ext}`, file.buffer, file.mimetype);
         return { imageUrl };
     }
 

@@ -15,7 +15,7 @@ export class CheckoutController {
 @UseGuards(JwtAuthGuard)
 async createSession(@Body() productrequest:createproductnumber){
 
-    return this.CheckoutService.createsession(productrequest.productnumber);
+    return this.CheckoutService.createsession(productrequest.productnumber, productrequest.successUrl, productrequest.cancelUrl);
 
 }
 

@@ -1,8 +1,14 @@
-import { IsNumber } from "class-validator";
+import { IsNumber, IsUrl } from "class-validator";
 
-export class createproductnumber{
+export class createproductnumber {
 
     @IsNumber()
-    productnumber:number;
+    productnumber: number;
+
+    @IsUrl()
+    successUrl: string;
+
+    @IsUrl()
+    cancelUrl: string;
 
 }

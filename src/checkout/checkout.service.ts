@@ -1,22 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { ProductsService } from 'src/products/products.service';
 import Stripe from 'stripe';
 
 @Injectable()
 export class CheckoutService {
 
-    constructor(private readonly ProductsService:ProductsService , private readonly Stripe:Stripe, private readonly ConfigServie:ConfigService){
+    constructor(private readonly ProductsService: ProductsService, private readonly Stripe: Stripe){
 
     }
 
 
-    async createsession(productId: number){
+    async createsession(productId: number, successUrl: string, cancelUrl: string){
        const product = await this.ProductsService.getproduct(productId);
           return  await this.Stripe.checkout.sessions.create(
             {
                 metadata:{
-                    productId, 
+                    productId,
                 },
                 line_items: [
                     {
@@ -32,9 +31,8 @@ export class CheckoutService {
                     }
                 ],
                 mode:'payment',
-                success_url: this.ConfigServie.getOrThrow('STRIPE_SUCCESS_URL'),
-                cancel_url: this.ConfigServie.getOrThrow('STRIPE_CANCEL_URL')
-                
+                success_url: successUrl,
+                cancel_url: cancelUrl,
             }
           )
     }

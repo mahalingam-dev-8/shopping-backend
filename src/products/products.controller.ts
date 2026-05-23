@@ -36,7 +36,8 @@ export class ProductsController {
         )
         file: Express.Multer.File,
     ) {
-        return this.s3Service.uploadImage(`${productId}.jpg`, file.buffer, file.mimetype);
+        const imageUrl = await this.s3Service.uploadImage(`${productId}.jpg`, file.buffer, file.mimetype);
+        return { imageUrl };
     }
 
     @Get()

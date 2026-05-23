@@ -30,12 +30,12 @@ export class S3Service {
     return `https://${this.bucket}.s3.amazonaws.com/${key}`;
   }
 
-  async imageExists(key: string): Promise<boolean> {
+  async getImageUrl(key: string): Promise<string | null> {
     try {
       await this.s3.send(new HeadObjectCommand({ Bucket: this.bucket, Key: key }));
-      return true;
+      return `https://${this.bucket}.s3.amazonaws.com/${key}`;
     } catch {
-      return false;
+      return null;
     }
   }
 }

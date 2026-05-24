@@ -4,6 +4,8 @@ A production-grade e-commerce application built with **Next.js 14** and **NestJS
 
 **Live Demo:** [shopping-frontend-ebon.vercel.app](https://shopping-frontend-ebon.vercel.app)
 
+![Shoppy Products Page](./docs/screenshots/products-page.png)
+
 ---
 
 ## Architecture

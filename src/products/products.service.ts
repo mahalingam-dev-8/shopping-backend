@@ -47,6 +47,13 @@ export class ProductsService {
         }
     }
 
+    async uploadImage(productId: number, file: Express.Multer.File): Promise<string> {
+        const ext = file.originalname.split('.').pop();
+        const imageUrl = await this.s3Service.uploadImage(`${productId}.${ext}`, file.buffer, file.mimetype);
+        this.ProductsGateway.handleproductupdated();
+        return imageUrl;
+    }
+
     async update(productId: number, data: Prisma.ProductUpdateInput) {
         await this.prismaservice.product.update({ where: { id: productId }, data });
         this.ProductsGateway.handleproductupdated();

@@ -6,7 +6,6 @@ import { currentuser } from 'src/auth/current-user.decorator';
 import { TokenPayload } from 'src/auth/token-payload.interface';
 import { ProductsService } from './products.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { S3Service } from 'src/s3/s3.service';
 
 @ApiTags('Products')
 @Controller('products')
@@ -14,7 +13,6 @@ export class ProductsController {
 
     constructor(
         private readonly ProductsService: ProductsService,
-        private readonly s3Service: S3Service,
     ) {}
 
     @Post()
@@ -37,8 +35,7 @@ export class ProductsController {
         )
         file: Express.Multer.File,
     ) {
-        const ext = file.originalname.split('.').pop();
-        const imageUrl = await this.s3Service.uploadImage(`${productId}.${ext}`, file.buffer, file.mimetype);
+        const imageUrl = await this.ProductsService.uploadImage(+productId, file);
         return { imageUrl };
     }
 

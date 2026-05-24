@@ -4,7 +4,7 @@ import { AuthService } from "src/auth/auth.service";
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: ['http://localhost:3000', 'https://shopping-frontend-ebon.vercel.app'],
     credentials: true,
   },
   transports: ['polling'],

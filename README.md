@@ -201,7 +201,7 @@ npm install
 Create `.env.local`:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_test_...
 ```
 
 Start the dev server:

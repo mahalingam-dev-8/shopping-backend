@@ -4,6 +4,8 @@ A production-grade e-commerce application built with **Next.js 14** and **NestJS
 
 **Live Demo:** [shopping-frontend-ebon.vercel.app](https://shopping-frontend-ebon.vercel.app)
 
+![Shoppy Products Page](./docs/screenshots/products-page.png)
+
 ---
 
 ## Architecture
@@ -201,7 +203,7 @@ npm install
 Create `.env.local`:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_test_...
 ```
 
 Start the dev server:

@@ -1,99 +1,254 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🛒 Shoppy — Full-Stack E-Commerce Platform
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-grade e-commerce application built with **Next.js 14** and **NestJS**, featuring Stripe payments, role-based access control, real-time updates, and a complete CI/CD pipeline deployed on AWS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**Live Demo:** [shopping-frontend-ebon.vercel.app](https://shopping-frontend-ebon.vercel.app)
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Architecture
 
-## Project setup
-
-```bash
-$ pnpm install
+```
+Browser
+  │
+  ▼
+Next.js 14 (Vercel)                    NestJS (AWS Elastic Beanstalk)
+  ├── App Router + SSR                    ├── REST API
+  ├── Server Actions                      ├── JWT + Passport.js Auth
+  ├── Socket.io Client                    ├── Role-based Access (Admin/User)
+  ├── Stripe Checkout                     ├── Socket.io Gateway
+  └── Tailwind CSS + MUI                  ├── Stripe Webhook Handler
+                                          ├── AWS S3 Image Uploads
+                                          └── Prisma ORM
+                                                │
+                                    ┌───────────┴───────────┐
+                                    ▼                       ▼
+                              PostgreSQL              AWS S3 Bucket
+                              (AWS RDS)             (Product Images)
 ```
 
-## Compile and run the project
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+**CI/CD Pipeline:**
+```
+GitHub Push → AWS CodePipeline → AWS CodeBuild → AWS Elastic Beanstalk (auto-deploy)
 ```
 
-## Run tests
+---
+
+## Features
+
+- **Authentication** — JWT-based auth with HttpOnly cookies, signup/login, password hashing with bcrypt
+- **Role-Based Access Control** — Admin and User roles; admins can create/manage products, users can browse and purchase
+- **Product Management** — Full CRUD for products with image upload to AWS S3
+- **Stripe Payments** — Checkout session creation, webhook handling for payment confirmation
+- **Order Management** — Automatic order creation on successful payment, order history per user, admin view of all orders
+- **Real-Time Updates** — Socket.io WebSocket gateway for live product updates (development environment)
+- **Database Migrations** — Prisma ORM with type-safe queries and migration management
+- **Server-Side Rendering** — Next.js 14 App Router with Server Components and Server Actions
+
+---
+
+## Tech Stack
+
+| Layer          | Technology                                          |
+|----------------|-----------------------------------------------------|
+| Frontend       | Next.js 14, TypeScript, Tailwind CSS, Material UI   |
+| Backend        | NestJS, TypeScript, Passport.js, Socket.io          |
+| Database       | PostgreSQL (AWS RDS), Prisma ORM                    |
+| Payments       | Stripe (Checkout Sessions + Webhooks)               |
+| File Storage   | AWS S3                                              |
+| Hosting        | Vercel (frontend), AWS Elastic Beanstalk (backend)  |
+| CI/CD          | AWS CodePipeline, AWS CodeBuild                     |
+| Infrastructure | AWS RDS, S3, Elastic Beanstalk, CloudFront          |
+
+---
+
+## Database Schema
+
+```
+┌──────────────┐       ┌──────────────┐       ┌──────────────┐
+│    User       │       │   Product    │       │    Order     │
+├──────────────┤       ├──────────────┤       ├──────────────┤
+│ id       (PK)│───┐   │ id       (PK)│───┐   │ id       (PK)│
+│ email        │   │   │ name         │   │   │ userId   (FK)│
+│ password     │   │   │ description  │   │   │ productId(FK)│
+│ role (enum)  │   └──▶│ userid   (FK)│   └──▶│ createdAt    │
+│              │       │ price        │       │              │
+│              │       │ sold         │       │              │
+└──────────────┘       └──────────────┘       └──────────────┘
+
+Roles: USER | ADMIN
+```
+
+---
+
+## API Endpoints
+
+### Auth
+| Method | Endpoint       | Description          | Auth |
+|--------|---------------|----------------------|------|
+| POST   | `/auth/login`  | Login, returns JWT   | No   |
+
+### Users
+| Method | Endpoint     | Description           | Auth |
+|--------|-------------|----------------------|------|
+| POST   | `/users`     | Register new user     | No   |
+| GET    | `/users/me`  | Get current user      | Yes  |
+
+### Products
+| Method | Endpoint                      | Description             | Auth  |
+|--------|------------------------------|------------------------|-------|
+| GET    | `/products`                   | List all products       | Yes   |
+| GET    | `/products/:id`               | Get product by ID       | Yes   |
+| POST   | `/products`                   | Create product          | Admin |
+| POST   | `/products/:id/image`         | Upload product image    | Admin |
+
+### Checkout
+| Method | Endpoint              | Description                    | Auth |
+|--------|-----------------------|-------------------------------|------|
+| POST   | `/checkout/session`    | Create Stripe checkout session | Yes  |
+| POST   | `/checkout/webhook`    | Stripe webhook handler         | No   |
+
+### Orders
+| Method | Endpoint       | Description              | Auth  |
+|--------|---------------|--------------------------|-------|
+| GET    | `/orders`      | Get current user's orders | Yes   |
+| GET    | `/orders/all`  | Get all orders            | Admin |
+
+---
+
+## Infrastructure (AWS)
+
+```
+┌─────────────────────────────────────────────────┐
+│                    AWS Cloud                      │
+│                                                   │
+│  ┌─────────────┐    ┌──────────────────────────┐ │
+│  │ CodePipeline │───▶│   Elastic Beanstalk      │ │
+│  │  + CodeBuild │    │   (NestJS on Node.js)    │ │
+│  └─────────────┘    │                          │ │
+│                      │   ┌──────────────┐       │ │
+│                      │   │ EC2 Instance │       │ │
+│                      │   │  + Nginx     │       │ │
+│                      │   └──────────────┘       │ │
+│                      └──────────┬───────────────┘ │
+│                                 │                  │
+│                    ┌────────────┼────────────┐     │
+│                    ▼            ▼            ▼     │
+│              ┌──────────┐ ┌─────────┐ ┌────────┐  │
+│              │ RDS      │ │   S3    │ │CloudFrt│  │
+│              │PostgreSQL│ │ Images  │ │  CDN   │  │
+│              └──────────┘ └─────────┘ └────────┘  │
+│                                                   │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js 20+
+- PostgreSQL
+- Stripe account (test mode)
+- AWS account (for S3 — optional for local dev)
+
+### Backend Setup
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+git clone https://github.com/mahalingam-dev-8/shopping-backend.git
+cd shopping-backend
+npm install --legacy-peer-deps
 ```
+
+Create `.env` from the example:
+```bash
+cp .env.example .env
+```
+
+Configure your environment variables:
+```env
+DATABASE_URL=postgresql://user:password@localhost:5432/shoppy
+JWT_SECRET=your-jwt-secret
+JWT_EXPIRATION=1d
+PORT=3000
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_SUCCESS_URL=http://localhost:3000/success
+STRIPE_CANCEL_URL=http://localhost:3000/cancel
+AWS_S3_BUCKET=your-bucket-name
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+AWS_REGION=us-east-1
+```
+
+Run database migrations:
+```bash
+npx prisma migrate dev
+```
+
+Start the server:
+```bash
+npm run start:dev
+```
+
+### Frontend Setup
+
+```bash
+git clone https://github.com/mahalingam-dev-8/shopping-frontend.git
+cd shopping-frontend
+npm install
+```
+
+Create `.env.local`:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+```
+
+Start the dev server:
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+---
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Backend (AWS Elastic Beanstalk)
+The backend auto-deploys via AWS CodePipeline on every push to `main`. The pipeline runs CodeBuild (install, build, prisma generate + migrate) and deploys the artifact to Elastic Beanstalk.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Frontend (Vercel)
+The frontend auto-deploys on Vercel on every push to `main`. Environment variables are configured in the Vercel dashboard.
 
-```bash
-$ pnpm install -g mau
-$ mau deploy
+---
+
+## Project Structure
+
+```
+shopping-backend/
+├── prisma/
+│   ├── schema.prisma          # Database schema
+│   └── migrations/            # Database migrations
+├── src/
+│   ├── auth/                  # JWT authentication module
+│   ├── users/                 # User registration & profile
+│   ├── products/              # Product CRUD + WebSocket gateway
+│   ├── checkout/              # Stripe checkout + webhook
+│   ├── orders/                # Order management
+│   ├── s3/                    # AWS S3 file upload service
+│   ├── prisma/                # Prisma service module
+│   └── app.module.ts          # Root module
+├── buildspec.yaml             # AWS CodeBuild configuration
+├── Procfile                   # Elastic Beanstalk process config
+└── package.json
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## Repositories
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Repository | Description |
+|-----------|-------------|
+| [shopping-backend](https://github.com/mahalingam-dev-8/shopping-backend) | NestJS REST API, Prisma, Stripe, S3 |
+| [shopping-frontend](https://github.com/mahalingam-dev-8/shopping-frontend) | Next.js 14 App Router, Tailwind, MUI |
